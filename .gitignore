@@ -1,0 +1,8 @@
+.vs/
+x64/
+repo-con.250bd9c6/
+
+*.vcxproj
+*.sln
+*.filters
+*.user
