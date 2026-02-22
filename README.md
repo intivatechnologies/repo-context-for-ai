@@ -103,3 +103,5 @@ The executable will be output to:
 build/Debug/RepoContextClipboardForAi.exe
 ```
 
+## This project now works with GitHub Actions to ensure the CMake build commands work on a given local Windows machine.
+You can check the CI script in `.github/workflows/windows-build.yml`.
