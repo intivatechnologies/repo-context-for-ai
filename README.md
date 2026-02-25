@@ -18,7 +18,8 @@ I've chosen this license only to validate [https://mikesinclair66.github.io](my 
 
 ## Features (Ctrl/Cmd + Click to open in a new tab)
 - <a href="./readme_subfolder/CMake.md">CMake Integration</a>[^1]
-- <a href="./readme_subfolder/CI-integrations.md">CI integrations - GitHub Actions</a>[^2]
+- <a href="./readme_subfolder/CI-integrations.md">CI integrations - GitHub Actions</a>
+[^1]: Location: "./readme_subfolder/CMake.md"
 
 [!IMPORTANT]
 You will have to have [https://cmake.org](CMake) installed to run the [](**installation steps**).
