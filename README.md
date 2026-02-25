@@ -28,32 +28,16 @@ You will have to have [https://cmake.org](CMake) installed to run the [](**insta
 ### 1. Purpose
 1.1 System Overview
 
-<ul>
-    <li>
-        What the system is
-    </li>
-    <li>
-        The core problem it solves
-    </li>
-    <li>
-        The primary outcome it delivers
-    </li>
-</ul>
+- What the system is
+- The core problem it solves
+- The primary outcome it delivers
 
 1.2 Success Criteria
 
 Terms for measurable success:
-<ul>
-    <li>
-        Business goal (e.g., acquire 100 users in 3 months)
-    </li>
-    <li>
-        Technical goal (e.g., ~300ms API response time)
-    </li>
-    <li>
-        User goal (e.g., reduce task time by 40%)
-    </li>
-</ul>
+- Business goal (e.g., acquire 100 users in 3 months)
+- Technical goal (e.g., ~300ms API response time)
+- User goal (e.g., reduce task time by 40%)
 
 ### 2. Users
 
