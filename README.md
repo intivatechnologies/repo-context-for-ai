@@ -17,10 +17,8 @@ This project uses the [./LICENSE](MIT license). Because the solution is not inte
 I've chosen this license only to validate [https://mikesinclair66.github.io](my work).
 
 ## Features (Ctrl/Cmd + Click to open in a new tab)
-<ul>
-    <li>[./readme_subfolder/CMake.md](CMake integration)[^1]</li>
-    <li>[./readme_subfolder/CI-integrations.md](CI integrations - GitHub Actions)[^2]</li>
-</ul>
+ - [CMake integration](./readme_subfolder/CMake.md)[^1]
+ - [./readme_subfolder/CI-integrations.md](CI integrations - GitHub Actions)[^2]
 
 [!IMPORTANT]
 You will have to have [https://cmake.org](CMake) installed to run the [](**installation steps**).
@@ -56,7 +54,7 @@ Terms for measurable success:
     </li>
 </ul>
 
-###
+<hr style="height: 1px" />
 
 ### 2. Users
 
