@@ -17,7 +17,7 @@ This project uses the [./LICENSE](MIT license). Because the solution is not inte
 I've chosen this license only to validate [https://mikesinclair66.github.io](my work).
 
 ## Features (Ctrl/Cmd + Click to open in a new tab)
- - [CMake integration](./readme_subfolder/CMake.md)[^1]
+[./readme_subfolder/CMake.md](CMake integration)[^1]
  - [./readme_subfolder/CI-integrations.md](CI integrations - GitHub Actions)[^2]
 
 [!IMPORTANT]
