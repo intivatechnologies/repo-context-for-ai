@@ -1,10 +1,230 @@
-# About
+# Welcome to a done-for-AI clipboard program
+This non-redundant open-ended channel provides AI with context for your project in real-time
+so that you don't manually have to perform code snippets and 'codesplaining'.
 
-An executable that integrates your desired repo content to text form that can be used to provide context to an LLM.
+## Even this README is dedicated to the AI's interpretative abilities
+Ever observe a README that seems to have lack of awareness to reason? This README is organized
+like a [https://www.inflectra.com/Ideas/Topic/Requirements-Definition.aspx](Software Requirements Specification)
+(see **Software Requirements Spec**).
+
+## About
+
+An executable that converts your passed root directory to text and copies it to your clipboard.
 
 ## License
 
-This project uses the MIT license.
+This project uses the [./LICENSE](MIT license). Because the solution is not intended to be a standalone product,
+I've chosen this license only to validate [https://mikesinclair66.github.io](my work).
+
+## Features (Ctrl/Cmd + Click to open in a new tab)
+<ul>
+    <li>[./readme_subfolder/CMake.md](CMake integration)[^1]</li>
+    <li>[./readme_subfolder/CI-integrations.md](CI integrations - GitHub Actions)[^2]</li>
+</ul>
+
+[!IMPORTANT]
+You will have to have [https://cmake.org](CMake) installed to run the [](**installation steps**).
+
+## Software Requirements Spec
+### 1. Purpose
+1.1 System Overview
+
+<ul>
+    <li>
+        What the system is
+    </li>
+    <li>
+        The core problem it solves
+    </li>
+    <li>
+        The primary outcome it delivers
+    </li>
+</ul>
+
+1.2 Success Criteria
+
+Terms for measurable success:
+<ul>
+    <li>
+        Business goal (e.g., acquire 100 users in 3 months)
+    </li>
+    <li>
+        Technical goal (e.g., ~300ms API response time)
+    </li>
+    <li>
+        User goal (e.g., reduce task time by 40%)
+    </li>
+</ul>
+<hr />
+
+### 2. Users
+
+List user roles and their intent.
+
+2.1 User Roles
+
+Role: Guest
+<ul>
+<li>
+Can browse public content
+</li>
+<li>
+Cannot modify data
+</li>
+</ul>
+
+Role: Authenticated User
+<ul>
+<li>
+Can create and manage own data
+</li>
+</ul>
+
+Role: Admin
+<ul>
+<li>
+Can manage users and system settings
+</li>
+</ul>
+
+(Adjust roles as needed.)
+
+<hr />
+
+### 3. Functional Requirements
+
+Write as atomic, testable statements.
+
+Format:
+```
+FR-1: The system shall allow users to register with email and password.
+FR-2: The system shall authenticate users via JWT.
+FR-3: The system shall allow users to create a project.
+FR-4: The system shall allow users to edit or delete their own projects.
+FR-5: The system shall allow admins to deactivate users.
+```
+
+Guidelines:
+<ul>
+    <li>
+        One behavior per requirement
+    </li>
+    <li>
+        No implementation details
+    </li>
+    <li>
+        Must be testable
+    </li>
+    <li>
+        Use “shall”
+    </li>
+</ul>
+
+Group by domain if needed:
+### Authentication
+### Core Feature
+### Admin Features
+
+<hr />
+
+### 4. Non-Functional Requirements
+These define system quality.
+
+4.1 Performance
+<ul>
+<li>
+API responses < 300ms under normal load
+</li>
+<li>
+Initial page load < 2 seconds
+</li>
+</ul>
+
+4.2 Security
+<ul>
+<li>
+Passwords must be hashed
+</li>
+<li>
+HTTPS required
+</li>
+<li>
+Role-based access control
+</li>
+</ul>
+
+4.3 Scalability
+<ul>
+<li>
+Backend must be stateless
+</li>
+<li>
+Horizontal scaling supported
+</li>
+</ul>
+
+4.4 Reliability
+<ul>
+<li>
+Daily automated backups
+</li>
+<li>
+System uptime target: 99%
+</li>
+</ul>
+
+4.5 Maintainability
+<ul>
+<li>
+Modular architecture
+</li>
+<li>
+Minimum 70% unit test coverage
+</li>
+</ul>
+
+### 5. Data Model
+List core entities and key fields.
+[!NOTE]
+This is kept at high level -- detailed schemas belong elsewhere.
+
+Entity: User
+<ul>
+<li>
+id (UUID)
+</li>
+<li>
+email (string, unique)
+</li>
+<li>
+passwordHash (string)
+</li>
+<li>
+role (enum)
+</li>
+<li>
+createdAt (timestamp)
+</li>
+</ul>
+
+Entity: Project
+<ul>
+<li>
+id (UUID)
+</li>
+<li>
+ownerId (User reference)
+</li>
+<li>
+title (string)
+</li>
+<li>
+description (text)
+</li>
+<li>
+createdAt (timestamp)
+</li>
+</ul>
 
 # Who/What does this project exist to serve?
 
