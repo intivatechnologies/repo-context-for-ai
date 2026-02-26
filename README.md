@@ -5,15 +5,13 @@ works and context for the LLM to improve upon your existing code.
 
 ## Industry-standard README
 Ever observe a README that seems to have lack of context? This README is organized in industry-standard fashion
-like a [https://www.inflectra.com/Ideas/Topic/Requirements-Definition.aspx](Software Requirements Specification)
-(see **Software Requirements Spec**).
+like a <a href="https://www.inflectra.com/Ideas/Topic/Requirements-Definition.aspx">Software Requirements Specification</a> (see **Software Requirements Spec**).
 
 ## How It Works
 An executable that converts your passed root directory to text and copies it to your clipboard.
 
 ## License
-This project uses the [./LICENSE](MIT license). Because the solution is not intended to be a standalone product,
-I've chosen this license only to validate [https://mikesinclair66.github.io](my work).
+This project uses the <a href"./LICENSE">MIT license</a>. Because the solution is not intended to be a standalone product, I've chosen this license only to validate <a href="https://mikesinclair66.github.io">my work</a>.
 
 # Build Features (Ctrl/Cmd + Click to open in a new tab)
 - [CMake Integration]("./readme_subfolder/CMake.md")[^1]
@@ -22,7 +20,7 @@ I've chosen this license only to validate [https://mikesinclair66.github.io](my 
 [^2]: Location: "./readme_subfloder/CI-integrations.md"
 
 > [!IMPORTANT]
-You will have to have [CMake](https://cmake.org) installed to run the [](**installation steps**).
+You will have to have <a href="https://cmake.org">CMake</a> installed to run the [](**installation steps**).
 
 # Software Requirements Spec
 
