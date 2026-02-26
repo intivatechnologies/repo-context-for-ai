@@ -11,13 +11,13 @@ like a <a href="https://www.inflectra.com/Ideas/Topic/Requirements-Definition.as
 An executable that converts your passed root directory to text and copies it to your clipboard.
 
 ## License
-This project uses the <a href"./LICENSE">MIT license</a>. Because the solution is not intended to be a standalone product, I've chosen this license only to validate <a href="https://mikesinclair66.github.io">my work</a>.
+This project uses the [MIT license](./LICENSE). Because the solution is not intended to be a standalone product, I've chosen this license only to validate <a href="https://mikesinclair66.github.io">my work</a>.
 
 # Build Features (Ctrl/Cmd + Click to open in a new tab)
 - [CMake Integration]("./readme_subfolder/CMake.md")[^1]
 - [CI integrations - GitHub Actions]("./readme_subfolder/CI-integrations.md")[^2]</a>
-[^1]: Location: "./readme_subfolder/CMake.md"
-[^2]: Location: "./readme_subfloder/CI-integrations.md"
+[^1]: Location: <a href="./readme_subfolder/CMake.md">"./readme_subfolder/CMake.md"</a>
+[^2]: Location: <a href="./readme_subfolder/CI-integrations.md">"./readme_subfolder/CI-integrations.md"</a>
 
 > [!IMPORTANT]
 You will have to have <a href="https://cmake.org">CMake</a> installed to run the [](**installation steps**).
@@ -162,7 +162,7 @@ Providing readable, simple, and comprehensive text to the user’s clipboard so 
 Copying and pasting code snippets of a given solution and a snippet for each of its dependencies.
 
 # CMake integration
-This project integrates with [https://cmake.org](CMake) with the goal to:
+This project integrates with <a href="https://cmake.org">CMake</a> with the goal to:
 - Enable cross-platform builds
 - Eliminate reliance on manually creating Visual Studio projects
 - Support clean out-of-source builds
