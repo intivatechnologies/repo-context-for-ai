@@ -5,8 +5,6 @@
 #include <stack>
 #include <filesystem>
 
-#include "file_messenger/directory.hpp"
-
 using namespace std;
 
 int main(int argc, char* argv[]) {
