@@ -33,7 +33,7 @@ string getRootName(filesystem::path path) {
 
 static const vector<string> ignoreNames({ ".git", "build" });
 
-static const vector<string> includeForContents({ ".yml", ".cpp", ".hpp", ".txt", ".md"});
+static vector<string> includeForFileContents;
 static map<string, string> fileContents;
 
 vector<PlacedLine> getPlacedLines(string root) {
@@ -53,12 +53,12 @@ vector<PlacedLine> getPlacedLines(string root) {
 
 			//store file content if extension is favoured
 			const int dotPosition = name.find_last_of('.');
-			if (dotPosition != -1) {
+			if (includeForFileContents.size() > 0 && dotPosition != -1) {
 				const string extension = name.substr(dotPosition, name.size() - 1);
-				auto includeForContentsCheck = find(includeForContents.begin(),
-					includeForContents.end(), extension);
+				auto includeForContentsCheck = find(includeForFileContents.begin(),
+					includeForFileContents.end(), extension);
 
-				if (includeForContentsCheck != includeForContents.end()) {
+				if (includeForContentsCheck != includeForFileContents.end()) {
 					ifstream file(root + '\\' + name);
 					if (!file)
 						throw std::runtime_error("Failed to open file");
@@ -98,6 +98,11 @@ vector<PlacedLine> getPlacedLines(string root) {
 
 int main(int argc, char* argv[]) {
 	if (argc > 1) {
+		if (argc > 2) {
+			for (int i = 2; i < argc; i++)
+				includeForFileContents.push_back(argv[i]);
+		}
+
 		cout << "> PROJECT STRUCTURE:" << endl;
 
 		vector<PlacedLine> lines({ PlacedLine(getRootName(argv[1]) + ": {") });
@@ -128,11 +133,13 @@ int main(int argc, char* argv[]) {
 			cout << indentation << pl.getLine() << endl;
 		}
 
-		cout << "> FILE CONTENTS" << endl;
-		for (const auto& [key, value] : fileContents)
-		{
-			cout << ">> \"" << key << '\"' << endl;
-			cout << value << endl << endl;
+		if (argc > 2) {
+			cout << "> FILE CONTENTS" << endl;
+			for (const auto& [key, value] : fileContents)
+			{
+				cout << ">> \"" << key << '\"' << endl;
+				cout << value << endl << endl;
+			}
 		}
 
 		return 0;
