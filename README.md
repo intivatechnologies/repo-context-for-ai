@@ -70,14 +70,26 @@ There are no administrative or multi-user roles. The application is single-user,
 
 ### Core Execution
 
-FR-1: Accepts a root directory as input.
-FR-2: Recursively traverses the provided directory.
-FR-3: Generates a structured textual representation of the directory contents. 
-FR-4: Includes file names in the generated output. 
-FR-5: Includes file contents in the generated output.
-FR-6: Preserves logical structure to maintain readability. 
-FR-7: Copies the generated text to the system clipboard.
-FR-8: Completes execution without requiring manual interaction beyond launch.
+FR-1: Accepts a root directory via a `--root` command-line flag.
+FR-2: Recursively traverses the provided directory and generates a structured textual representation of the directory contents.
+FR-3: Outputs directory structure independently of file content representation.
+
+[!NOTE] This project uses pattern support to indicate directories and files to include as a command
+ - "*.yml,*.txt"
+ - ".git/*,build/*"
+ 
+FR-4: Enables pattern support for what textual structure and content to exclude or include via `--include` and `--exclude`.
+FR-5: Enables pattern support like FR-4 but derived from inclusive and exclusive files (e.g. `--include-from .repoinclude` and `--exclude-from .repoignore`).
+FR-6: Adds a `--use-repo-config` tag so that `--include-from` and `--exclude-from` tags don't need to be specified.
+
+FR-7: Applies default exclusions for common build and version-control directories (e.g., `.git`, `build`).
+FR-8: Limits content to a specified amount of lines based on the configurable `--max-lines` tag.
+
+
+### Advanced Execution
+FR-X: Completes execution interactively when invoked with an `--interactive` tag. What this means is that the initial output wil default to `--include` all supported file extensions (unless used in conjunction with `--use-repo-config`) and then the user will be able to toggle using `space` any files or directories that they want the output to include / disinclude. Once the user finalizes their configuration and presses `Enter`, The console will output the corresponding command follow either one of the following conventions:
+1. If the user typed `--interactive` with `--use-repo-config`, the `.repoinclude` and `.repoignore` files will be updated and the output won't contain the `--include` and `--exclude` tags.
+2. If the user typed `--interactive` without `--use-repo-config` and without `--include-from` and `exclude-from`, the `.repoinclude` and `.repoexclude` files won't be updated and the output will contain the `--include` and `--exclude` tags to apply to the new configuration.
 
 ### Build & Tooling
 
