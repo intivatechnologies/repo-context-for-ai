@@ -3,11 +3,9 @@
 #include <vector>
 #include <map>
 
-#include "text_tree/text_tree.hpp"
 #include "directory_tree/directory_tree.hpp"
 
 using namespace std;
-using namespace text_tree;
 using namespace directory_tree;
 
 static vector<string> includeForFileContents;
