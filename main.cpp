@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 				includeForFileContents.push_back(argv[i]);
 		}
 
-		string textualRep = DirectoryTree::startAt(argv[1]);
+		string textualRep = DirectoryTree::getInstance().startAt(argv[1]);
 		cout << "> PROJECT STRUCTURE:" << endl;
 		cout << textualRep << endl;
 

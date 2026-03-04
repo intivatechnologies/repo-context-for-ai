@@ -6,6 +6,19 @@
 using namespace directory_tree;
 using namespace std::filesystem;
 
+void DirectoryTree::modifyIndentationStep(bool positiveStep) {
+	indentationVolume = positiveStep ? indentationVolume + '\t' :
+		indentationVolume.substr(0, indentationVolume.find_last_of("\t"));
+}
+
+void DirectoryTree::getFamilyOfChildren(string& textualRep, FolderRep* parent) {
+	textualRep += indentationVolume + parent->getName() + '\n';
+	modifyIndentationStep(true);
+	for (const auto& entryChild : parent->getChildren())
+		textualRep += indentationVolume + entryChild->getName() + '\n';
+	modifyIndentationStep(false);
+}
+
 FolderRep* DirectoryTree::getFolderAtRoot(string root) {
 	vector<FileRep*> rootChildren;
 
@@ -22,32 +35,11 @@ FolderRep* DirectoryTree::getFolderAtRoot(string root) {
 string DirectoryTree::startAt(string root) {
 	FolderRep* rootFolder = getFolderAtRoot(root);
 	string textualRep = "";
-	int indentationAmount = 0;
-
-	const auto getIndentationVolume = [&indentationAmount]() {
-		string indentationVolume = "";
-		for (int i = 0; i < indentationAmount; i++)
-			indentationVolume += '\t';
-		return indentationVolume;
-	};
 
 	for (const auto& entry : rootFolder->getChildren()) {
 		if (entry != nullptr) {
-			string indentationVolume = getIndentationVolume();
-			if (dynamic_cast<FolderRep*>(entry) != nullptr) {
-				vector<FileRep*> entryChildren = static_cast<FolderRep*>(entry)->getChildren();
-				textualRep += indentationVolume + entry->getName() + '\n';
-
-				++indentationAmount;
-				indentationVolume = getIndentationVolume();
-
-				for (const auto& entryChild : entryChildren) {
-					if(entryChild != nullptr)
-						textualRep += indentationVolume + entryChild->getName() + '\n';
-				}
-
-				--indentationAmount;
-			}
+			if (dynamic_cast<FolderRep*>(entry) != nullptr)
+				getFamilyOfChildren(textualRep, static_cast<FolderRep*>(entry));
 			else
 				textualRep += indentationVolume + entry->getName() + '\n';
 		}
