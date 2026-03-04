@@ -15,8 +15,8 @@ string TextTree::startAt(const char* root) {
 	for (PlacedLine pl : lines) {
 		switch (pl.getPlaceOperation()) {
 		case PlaceOperation::TABULATE:
-			indentation += "\t";
 			++tabsSoFar;
+			indentation += "\t";
 			break;
 		case PlaceOperation::DETABULATE:
 			--tabsSoFar;

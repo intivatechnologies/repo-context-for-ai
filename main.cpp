@@ -4,9 +4,11 @@
 #include <map>
 
 #include "text_tree/text_tree.hpp"
+#include "directory_tree/directory_tree.hpp"
 
 using namespace std;
 using namespace text_tree;
+using namespace directory_tree;
 
 static vector<string> includeForFileContents;
 static map<string, string> fileContents;
@@ -18,6 +20,11 @@ int main(int argc, char* argv[]) {
 				includeForFileContents.push_back(argv[i]);
 		}
 
+		string textualRep = DirectoryTree::startAt(argv[1]);
+		cout << "> PROJECT STRUCTURE:" << endl;
+		cout << textualRep << endl;
+
+		/*
 		cout << "> PROJECT STRUCTURE:" << endl;
 		cout << TextTree::startAt(argv[1]) << endl;
 
@@ -29,6 +36,7 @@ int main(int argc, char* argv[]) {
 				cout << value << endl << endl;
 			}
 		}
+		*/
 
 		return 0;
 	}
