@@ -1,12 +1,21 @@
 #include <iostream>
-#include <string>
+
 #include <vector>
+#include <string>
 #include <map>
 
-#include "text_tree/text_tree.hpp"
+#include <functional>
+
+#include <fstream>
+#include <sstream>
+
+#include "file_records/folder_rep.hpp"
+#include "directory_tree/directory_tree.hpp"
+#include "misc/get_content_from_files.hpp"
 
 using namespace std;
-using namespace text_tree;
+using namespace file_records;
+using namespace directory_tree;
 
 static vector<string> includeForFileContents;
 static map<string, string> fileContents;
@@ -18,15 +27,33 @@ int main(int argc, char* argv[]) {
 				includeForFileContents.push_back(argv[i]);
 		}
 
+		FolderRep* assignedFolder = FolderRep::installFolderAtRoot(argv[1]);
+
+		/*
+		for (const auto& child : assignedFolder->getChildren())
+			cout << child->getName() << endl;
+			*/
+
+		string textualRep = DirectoryTree::getInstance().startAt(assignedFolder);
+
 		cout << "> PROJECT STRUCTURE:" << endl;
-		cout << TextTree::startAt(argv[1]) << endl;
+		cout << textualRep << endl << endl;
 
 		if (argc > 2) {
-			cout << "> FILE CONTENTS" << endl;
-			for (const auto& [key, value] : fileContents)
-			{
-				cout << ">> \"" << key << '\"' << endl;
-				cout << value << endl << endl;
+			vector<string> allRootsByExtensions;
+			for (int i = 2; i < argc; i++)
+				FolderRep::loadAllRootsByExtension(allRootsByExtensions, assignedFolder, argv[i]);
+			
+			cout << "> FILE PATHS TO DISPLAY CONTENTS" << endl;
+			for (string rootByExtension : allRootsByExtensions)
+				cout << rootByExtension << endl;
+			cout << endl;
+
+			vector<string> contentsOfAppliedFiles = getContentFromFiles(allRootsByExtensions);
+
+			for(int i = 0; i < allRootsByExtensions.size(); i++) {
+				cout << "> CONTENTS OF \"" << allRootsByExtensions[i] << "\":" << endl;
+				cout << contentsOfAppliedFiles[i] << endl << endl;
 			}
 		}
 
