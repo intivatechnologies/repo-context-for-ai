@@ -9,8 +9,8 @@ static string loadedTabSequence = "";
 
 void traverseStringTree(string& listTree, const FilesystemNode& node) {
 	loadedTabSequence += TAB_SPACE;
-	for (const auto& child : node.getChildren()) {
-		listTree += loadedTabSequence + child.getName() + '\n';
+	for (const auto& child : node.children) {
+		listTree += loadedTabSequence + child.name + '\n';
 		traverseStringTree(listTree, child);
 	}
 	loadedTabSequence = loadedTabSequence

@@ -10,11 +10,11 @@ using namespace std;
 
 namespace file_records {
 	class FilesystemNode {
+	public:
 		string name, extension;
 		filesystem::path path;
 		vector<FilesystemNode> children;
 
-	public:
 		FilesystemNode(filesystem::directory_entry* directoryEntry) {
 			name = directoryEntry->path().filename().string();
 			path = directoryEntry->path();
@@ -22,25 +22,7 @@ namespace file_records {
 				extension = directoryEntry->path().extension().string();
 		}
 
-		void addChild(FilesystemNode child) {
-			children.push_back(child);
-		}
-
-		const string& getName() const {
-			return name;
-		}
-
-		const string& getExtension() const {
-			return extension;
-		}
-
-		const filesystem::path getPath() const {
-			return path;
-		}
-
-		const vector<FilesystemNode>& getChildren() const {
-			return children;
-		}
+		void buildOut(vector<string> excludeDirs);
 	};
 }
 
