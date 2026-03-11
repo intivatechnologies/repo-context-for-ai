@@ -8,10 +8,13 @@ set(SOURCES
     "main.cpp"
     "misc/get_root_name.hpp"
     "misc/get_content_from_files.hpp"
-    "directory_tree/directory_tree.hpp"
-    "directory_tree/directory_tree.cpp"
-    "file_records/folder_rep.hpp"
-    "file_records/folder_rep.cpp")
+    "file_records/filesystem_node.hpp"
+    "file_records/filesystem_node.cpp"
+    "traversals/traversals_content_roots.hpp"
+    "traversals/traversals_string_tree.hpp"
+    "test_repurposing/test_util.hpp"
+    "test_repurposing/tests.hpp"
+    "client/parse_flags.hpp")
 
 # The TREE argument mirrors your disk folders into VS filters
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
