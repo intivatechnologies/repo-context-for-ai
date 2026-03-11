@@ -22,7 +22,7 @@ using namespace file_records;
 using namespace client;
 using namespace test_repurposing;
 
-void runListTreeCheck(Flags& conf, FilesystemNode& rootNode) {
+void presentStructureTreeIfPrompted(Flags& conf, FilesystemNode& rootNode) {
 	if (conf.MODE_FLAG & conf.MF_STRUCTURE) {
 		//list the tree
 		string tree = rootNode.name + '\n';
@@ -31,7 +31,34 @@ void runListTreeCheck(Flags& conf, FilesystemNode& rootNode) {
 	}
 }
 
-bool runContentExtensionsCheckValidation(Flags& conf, const map<string, vector<string>>
+bool presentContentsIfPrompted(Flags& conf, map<string, vector<string>>
+::iterator FLAG_INCLUDE_EXTENSIONS_ITER, FilesystemNode& rootNode) {
+	if (conf.MODE_FLAG & conf.MF_CONTENT) {
+		//list all roots with extensions that are dedicated to content extraction
+		vector<string> contentRoots;
+		traverseContentRootsByExtension(contentRoots, rootNode, FLAG_INCLUDE_EXTENSIONS_ITER->second);
+
+		cout << endl << "> CONTENT ROOTS:" << endl;
+		for (string contentRoot : contentRoots)
+			cout << ">> " << contentRoot << endl;
+
+		/*
+		vector<string> contents = getContentFromFiles(contentRoots);
+
+		cout << endl << "> CONTENTS:" << endl;
+		for (int i = 0; i < contentRoots.size(); i++) {
+			cout << ">> " << contentRoots[i] << endl;
+			cout << contents[i] << endl << endl;
+		}
+		*/
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool checkThatContentExtensionsAreAvailable(Flags& conf, const map<string, vector<string>>
 ::iterator FLAG_INCLUDE_EXTENSIONS_ITER) {
 	if (FLAG_INCLUDE_EXTENSIONS_ITER != conf.flags.end()
 		&& FLAG_INCLUDE_EXTENSIONS_ITER->second.size() > 0) {
@@ -65,28 +92,11 @@ int main(int argc, char* argv[]) {
 			//build the tree
 			FilesystemNode rootNode(&rootEntry);
 			rootNode.buildOut(conf.flags.at(K_EXCLUDE_DIR));
-			runListTreeCheck(conf, rootNode);
+			presentStructureTreeIfPrompted(conf, rootNode);
 
-			if (runContentExtensionsCheckValidation(conf, FLAG_INCLUDE_EXTENSIONS_ITER)
-			&& (conf.MODE_FLAG & conf.MF_CONTENT)) {
-				//list all roots with extensions that are dedicated to content extraction
-				vector<string> contentRoots;
-				traverseContentRootsByExtension(contentRoots, rootNode, FLAG_INCLUDE_EXTENSIONS_ITER->second);
-
-				cout << endl << "> CONTENT ROOTS:" << endl;
-				for (string contentRoot : contentRoots)
-					cout << ">> " << contentRoot << endl;
-
-				/*
-				vector<string> contents = getContentFromFiles(contentRoots);
-
-				cout << endl << "> CONTENTS:" << endl;
-				for (int i = 0; i < contentRoots.size(); i++) {
-					cout << ">> " << contentRoots[i] << endl;
-					cout << contents[i] << endl << endl;
-				}
-				*/
-			}
+			//present the contents
+			if (checkThatContentExtensionsAreAvailable(conf, FLAG_INCLUDE_EXTENSIONS_ITER)
+				&& presentContentsIfPrompted(conf, FLAG_INCLUDE_EXTENSIONS_ITER, rootNode));
 		}
 	}
 
