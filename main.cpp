@@ -5,87 +5,185 @@ inline constexpr const char* K_ROOT = "root";
 #include <iostream>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #include <string>
 #include <filesystem>
+#include <regex>
 
-#include "file_records/filesystem_node.hpp"
-#include "traversals/traversals_content_roots.hpp"
-#include "traversals/traversals_string_tree.hpp"
-#include "misc/get_content_from_files.hpp"
-#include "misc/get_root_name.hpp"
+#include <fstream>
+
 #include "client/parse_flags.hpp"
 //#include "test_repurposing/tests.hpp"
+
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 using namespace filesystem;
 //using namespace test_repurposing;
 
-/*
-void presentStructureTreeIfPrompted(client::Flags& conf, file_records::FilesystemNode& rootNode) {
-	if (conf.MODE_FLAG & conf.MF_STRUCTURE) {
-		//list the tree
-		string tree = rootNode.name + '\n';
-		//traverseStringTree(tree, rootNode);
-		//cout << "> PROJECT STRUCTURE:" << endl << tree << endl;
+bool isIgnored(const path& p, const vector<string>& ignorePatterns) {
+	string pathStr = p.string();
+	for (const string& pattern : ignorePatterns) {
+		// Simple conversion: escape backslashes and turn '*' into '.*'
+		string regexPattern = pattern;
+		size_t pos = 0;
+		while ((pos = regexPattern.find("\\", pos)) != string::npos) {
+			regexPattern.replace(pos, 1, "\\\\");
+			pos += 2;
+		}
+
+		// Replace globs with regex equivalent
+		pos = 0;
+		while ((pos = regexPattern.find("*", pos)) != string::npos) {
+			regexPattern.replace(pos, 1, ".*");
+			pos += 2;
+		}
+
+		try {
+			if (regex_match(pathStr, regex(regexPattern, regex_constants::icase))) {
+				return true;
+			}
+		}
+		catch (...) { continue; }
 	}
+	return false;
 }
 
-bool presentContentsIfPrompted(client::Flags& conf, file_records::FilesystemNode& rootNode) {
-	if (conf.MODE_FLAG & conf.MF_CONTENT) {
-		//list all roots with extensions that are dedicated to content extraction
-		//vector<string> contentRoots;
-		//traverseContentRootsByExtension(contentRoots, rootNode, conf.get(K_INCLUDE_EXT));
-		//
-		//cout << endl << "> CONTENT ROOTS:" << endl;
-		//for (string contentRoot : contentRoots)
-		//	cout << ">> " << contentRoot << endl;
+vector<string> getContentFromFile(const path& fileRoot) {
+	vector<string> lines;
 
-		//vector<string> contents = getContentFromFiles(contentRoots);
-		//
-		//cout << endl << "> CONTENTS:" << endl;
-		//for (int i = 0; i < contentRoots.size(); i++) {
-		//	cout << ">> " << contentRoots[i] << endl;
-		//	cout << contents[i] << endl << endl;
-		//}
+	// 1. Open the file using the provided path
+	ifstream file(fileRoot);
 
-		return true;
+	// 2. Check if the file actually opened (exists and has permissions)
+	if (!file.is_open()) {
+		// Return an empty vector or handle error as needed
+		return lines;
 	}
-	else
-		return false;
+
+	string currentLine;
+	// 3. Read the file line by line until the end (EOF)
+	while (getline(file, currentLine)) {
+		// 4. Add each line to our vector
+		lines.push_back(currentLine);
+	}
+
+	file.close();
+
+	return lines;
 }
-*/
-
-/*
-bool checkThatContentExtensionsAreAvailable(client::Flags& conf) {
-	if (conf.get(K_INCLUDE_EXT).size() > 0) {
-		cout << "> CONTENT EXTENSIONS:" << endl;
-		for (auto& contentExtension : conf.get(K_INCLUDE_EXT))
-			cout << '-' << contentExtension << endl;
-
-		return true;
-	}
-	else {
-		TestUtil::throwErr("file extensions to dedicate for extraction");
-		return false;
-	}
-}
-*/
 
 struct DirectoryTree {
-	vector<pair<path, string>> namePairs;
-	map<path, DirectoryTree> folders;
+	string name;
+	path fullPath;
+	bool isDirectory, isActivated = false;
 
-	DirectoryTree(const path& absPath, const vector<string>& ignorePaths) {
-		for (directory_entry entry : directory_iterator(absPath)) {
-			path ep = entry.path();
-			namePairs.push_back(pair(ep, ep.filename().string()));
+	vector<DirectoryTree> children;
+	vector<string> metadata;
 
-			if (directory_entry(ep).is_directory()) {
-				DirectoryTree childTree(ep, ignorePaths);
-				for (pair<path, string>& childNamePair : childTree.namePairs)
-					namePairs.push_back(childNamePair);
-				folders.insert(pair(ep, childTree));
+	DirectoryTree(const path& rootPath) {
+		this->fullPath = rootPath;
+		this->name = rootPath.filename().string();
+		this->isDirectory = is_directory(rootPath);
+	}
+
+	void activate(const vector<string>& ignorePatterns) {
+		if (isActivated || !isDirectory) return;
+
+		try {
+			for (const auto& entry : directory_iterator(fullPath)) {
+				if (isIgnored(entry.path(), ignorePatterns)) continue;
+
+				// Create child
+				children.emplace_back(entry.path());
+			}
+			isActivated = true;
+		}
+		catch (...) { /* Handle permission errors */ }
+	}
+
+	void print(const vector<string>& ignorePatterns, stringstream& ss, int depth = 1) {
+		// 1. Calculate the base indentation
+		// If depth is 1 (root), we use 0 spaces. If deeper, we use (depth-1)*2
+		string indent = (depth > 1) ? string((depth - 1) * 2, ' ') : "";
+
+		// 2. Print the tree branch and name
+		ss << indent << "|_" << name << "\n";
+
+		// 3. Print the associated list of text (the "metadata")
+		// We add an extra 3 spaces to the indent so the text sits 
+		// underneath the name, past the "|_" prefix.
+		string textIndent = indent + "   ";
+		for (const string& info : metadata) {
+			ss << textIndent << info << "\n";
+		}
+
+		// 4. Recurse into folders
+		if (isDirectory) {
+			activate(ignorePatterns);
+			for (auto& child : children) {
+				child.print(ignorePatterns, ss, depth + 1);
+			}
+		}
+	}
+
+	DirectoryTree* findNode(const path& targetPath, const vector<string>& ignorePatterns) {
+		try {
+			// 1. Exact Match Check
+			// Use equivalent to handle different slash types ( / vs \ )
+			if (exists(this->fullPath) && exists(targetPath)) {
+				if (equivalent(this->fullPath, targetPath)) {
+					return this;
+				}
+			}
+
+			if (this->isDirectory) {
+				// 2. Optimization: Only enter if targetPath is "under" this folder
+				// We check if targetPath starts with this->fullPath
+				string targetStr = targetPath.lexically_normal().string();
+				string currentStr = this->fullPath.lexically_normal().string();
+
+				// If target isn't inside this folder, don't bother searching children
+				if (targetStr.find(currentStr) == string::npos) {
+					return nullptr;
+				}
+
+				// 3. Lazy Activation
+				this->activate(ignorePatterns);
+
+				// 4. Recurse
+				for (auto& child : children) {
+					DirectoryTree* found = child.findNode(targetPath, ignorePatterns);
+					if (found) return found;
+				}
+			}
+		}
+		catch (const filesystem_error& e) {
+			// This catches "Access Denied" or "Path Not Found" errors
+			return nullptr;
+		}
+
+		return nullptr;
+	}
+
+	void collectFilesWithExtensions(const vector<string>& ignorePatterns) {
+		// 1. If this is a directory, wake it up to see its children
+		if (this->isDirectory) {
+			this->activate(ignorePatterns);
+
+			for (auto& child : children) {
+				// Recurse into the child
+				child.collectFilesWithExtensions(ignorePatterns);
+			}
+		}
+		// 2. If it's a file, check if it has an extension
+		else {
+			if (this->fullPath.has_extension()) {
+				// 3. Populate this specific node's metadata with an empty static vector
+				vector<string> fileMetadata = getContentFromFile(this->fullPath);
+				this->metadata = fileMetadata;
 			}
 		}
 	}
@@ -100,42 +198,34 @@ int main(int argc, char* argv[]) {
 
 		if (conf.has(K_ROOT)) {
 			const path rootPath(conf.flags[K_ROOT][0]);
-			cout << rootPath.string() << endl;
 
-			string rpSpace = " ";
-			for (int i = 0; i < rootPath.string().size(); i++)
-				rpSpace += " ";
+			//1. extract the ignore paths and assemble each of them with the root path
+			vector<string> preassembledIgnorePaths;
+			for (const string& ignorePath : conf.get(K_IGNORE)) {
+				string ipConverted = ignorePath;
 
-			DirectoryTree rootTree(rootPath, conf.get(K_IGNORE));
-			for (auto [absPath, _] : rootTree.namePairs) {
-				string rps = rootPath.string();
-				string aps = absPath.string();
+				//swap out instances of '/' with '\\'
+				size_t slashIndex = ipConverted.find('/');
+				while (slashIndex != string::npos) {
+					replace(ipConverted.begin() + slashIndex, ipConverted.begin() + slashIndex + 1,
+						'/', '\\');
+					slashIndex = ipConverted.find('/');
+				}
 
-				cout << rpSpace << aps.substr(rps.size() + 1, aps.size() - 1) << endl;
+				ipConverted = rootPath.string() + '\\' + ipConverted;
+				preassembledIgnorePaths.push_back(ipConverted);
 			}
 
-			/*
-			DirectoryTree rootTree(rootPath, conf.get(K_IGNORE));
-			for (string& p : rootTree.allPaths)
-				cout << p << endl;
-				*/
+			DirectoryTree rootTree(rootPath);
+			stringstream ss;
 
-			//then we have a root path to work with
-			/*
-			filesystem::path rootPath(conf.flags[K_ROOT][0]);
-			filesystem::directory_entry rootEntry(rootPath);
+			//Start the traversal from the root to assign metadata
+			rootTree.collectFilesWithExtensions(preassembledIgnorePaths);
 
-			//build the tree
-			file_records::FilesystemNode rootNode(rootEntry);
-			map<string, vector<string>> directoryTable;
-			*/
-			//conf.get(K_IGNORE)
+			rootTree.print(preassembledIgnorePaths, ss);
 
-			//rootNode.buildOut(directoryTable);
-			//presentStructureTreeIfPrompted(conf, rootNode);
-			
-			//present the contents
-			//if (checkThatContentExtensionsAreAvailable(conf) && presentContentsIfPrompted(conf, rootNode));
+			string finalOutput = ss.str();
+			cout << finalOutput << endl;
 		} else
 			throw "You must specify a root path with the --root flag.";
 	}
